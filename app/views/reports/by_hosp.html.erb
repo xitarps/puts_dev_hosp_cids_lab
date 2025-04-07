@@ -1,0 +1,41 @@
+<h2>Report By Hosp</h2>
+
+<table>
+  <thead>
+    <tr>
+      <td>Cat</td>
+      <td>Descr</td>
+      <td>Qtd</td>
+      <td>Hosp</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @hosp_user_cids_filtered = @hosp_user_cids.select do |hosp_user_cid|
+      hosp_user_cid.hospital_id == @hosp_id.to_i 
+    end%>
+
+    <% 
+      @hosp_and_user_cids = @hosp_user_cids_filtered.map do |hosp_user_cid|
+        [ hosp_user_cid, hosp_user_cid.user_cid ]
+      end
+    %>
+
+    <%
+      @user_cids_groups = @hosp_and_user_cids.group_by do |hosp_and_user_cid|
+        hosp_and_user_cid[1].cid_id 
+      end
+    %>
+
+    <% @user_cids_groups.sort{ |a, b| Cid.find(a[0]).id <=> Cid.find(b[0]).id }.each  do |cid_group| %>
+      <tr>
+        <td><%= Cid.find(cid_group[0]).number %></td>
+        <td><%= Cid.find(cid_group[0]).description.truncate(50) %></td>
+        <td><%= cid_group[1].size %></td>
+        <td><%= cid_group[1][0][0].hospital.name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<!-- 8.0 s -->

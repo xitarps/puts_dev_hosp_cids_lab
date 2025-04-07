@@ -1,0 +1,29 @@
+<h2>Report By User (<%= User.find(@user_id).name %>)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <td>Cat</td>
+      <td>Descr</td>
+      <td>Hosp</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% 
+      @current_user_user_cids_filtered = @user_cids.select do |user_cid|
+        user_cid.user_id == @user_id.to_i
+      end
+    %>
+
+    <% @current_user_user_cids_filtered.sort{ |a, b| a.cid.id <=> b.cid.id }.each  do |user_cid| %>
+      <tr>
+        <td><%= user_cid.cid.number %></td>
+        <td><%= user_cid.cid.description.truncate(50) %></td>
+        <td><%= user_cid.hospitals.first.name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<!-- 700 ms -->
