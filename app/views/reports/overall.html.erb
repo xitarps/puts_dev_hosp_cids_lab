@@ -9,14 +9,16 @@
     </tr>
   </thead>
   <tbody>
-    <% cids_groups = @user_cids.group_by { |user_cid| cid.cid_id } %>
     <%
-      cids_groups.sort {|a, b| Cid.find(a[0]).number <=> Cind.find(b[0]).number }.each do |cid_group| %>
+      @user_cids.each do |user_cid| %>
         <tr>
-          <td><%= Cid.find(cid_group[0]).number %></td>
-          <td><%= Cid.find(cid_group[0]).description.truncate(50) %></td>
-          <td><%= cid_group[1].size %></td>
+          <td><%= user_cid.number %></td>
+          <td><%= user_cid.description.truncate(50) %></td>
+          <td><%= user_cid.total %></td>
         </tr>
       <% end %>
   </tbody>
 </table>
+
+<!-- 42 s -->
+<!-- 1.07 s -->
