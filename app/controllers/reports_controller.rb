@@ -1,14 +1,6 @@
 class ReportsController < ApplicationController
   def by_hosp
-    @hosp_user_cids = HospitalUserCid.select(cid: [ :number, :description ],
-                                             hospital: [ :name ])
-                                     .select("COUNT(user_cids.id) AS quantity")
-                                     .joins(:hospital, user_cid: :cid)
-                                     .where(hospital_id: params[:hosp_id].to_i)
-                                     .group(user_cids: :cid_id,
-                                            cid: [ :number, :description ],
-                                            hospital: [ :name ])
-                                     .order(cid_id: :asc)
+    @hosp_user_cids = Reports::ByHospQuery.call(id: params[:hosp_id])
   end
 
   def by_user
@@ -20,10 +12,6 @@ class ReportsController < ApplicationController
   end
 
   def overall
-    @user_cids = UserCid.select("COUNT(cids.id) AS total",
-                                cids: [ :number, :description ])
-                        .joins(:cid)
-                        .group(cids: :id)
-                        .order(cids: { id: :asc })
+    @user_cids = Reports::OverallQuery.call
   end
 end
