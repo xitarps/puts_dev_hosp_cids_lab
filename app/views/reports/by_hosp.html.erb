@@ -1,5 +1,41 @@
 <h2>Report By Hosp</h2>
 
+<% column_chart (@hosp_user_cids.map do |hosp_cid|
+      [hosp_cid.description.truncate(50), hosp_cid.quantity]
+    end)
+%>
+
+<%
+  @data = UserCid
+            .select("COUNT(user_cids.id)",
+                      "DATE_PART('year', user_cids.first_diagnosed_at)",
+                      cids: [:number, :description]
+                    )
+            .joins(:cid)
+            .group("DATE_PART('year', user_cids.first_diagnosed_at), cids.number, cids.description")
+            .order('cids.number asc')
+            .where("DATE_PART('year', user_cids.first_diagnosed_at) = ?", 2000)
+
+  line_chart (@data.map do |data|
+      ["#{data.number} - #{data.description.truncate(50)}", data.count]
+    end)
+%>
+
+<%
+  @data = UserCid.select("COUNT(user_cids.id),
+                          DATE_PART('year', user_cids.first_diagnosed_at)",
+                          cids: [:number, :description]
+                  )
+                 .joins(:cid)
+                 .group("DATE_PART('year', user_cids.first_diagnosed_at), cids.number, cids.description")
+                 .order(Arel.sql("DATE_PART('year', user_cids.first_diagnosed_at) asc"))
+                 .where("cids.number = ?", 'E85')
+
+    line_chart (@data.map do |data|
+      [data.date_part, data.count]
+    end)
+%>
+
 <table>
   <thead>
     <tr>
